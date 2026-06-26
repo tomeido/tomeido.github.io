@@ -1,12 +1,899 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Portfolio</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tomeido — Projects</title>
+  <meta name="description" content="tomeido의 GitHub 프로젝트 포트폴리오 — Computational Design, BIM, Web Apps, AI/ML">
+  <meta name="author" content="tomeido">
+  <meta property="og:title" content="tomeido — Projects">
+  <meta property="og:description" content="Computational Designer의 GitHub 프로젝트 모음">
+  <meta property="og:url" content="https://tomeido.github.io">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0a0a0f;
+      --bg-secondary: #12121a;
+      --bg-card: rgba(255,255,255,0.04);
+      --bg-card-hover: rgba(255,255,255,0.08);
+      --border-color: rgba(255,255,255,0.08);
+      --border-hover: rgba(255,255,255,0.18);
+      --text-primary: #f0f0f5;
+      --text-secondary: #8a8a9a;
+      --text-muted: #5a5a6a;
+      --accent-gradient: linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+      --accent-blue: #667eea;
+      --accent-purple: #764ba2;
+      --card-radius: 14px;
+      --transition: cubic-bezier(0.4,0,0.2,1);
+    }
+    *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+    html { font-size:16px; scroll-behavior:smooth; }
+    body {
+      font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+      background:var(--bg-primary);
+      color:var(--text-primary);
+      min-height:100vh;
+      overflow-x:hidden;
+      -webkit-font-smoothing:antialiased;
+    }
+    #bg-canvas {
+      position:fixed; top:0; left:0; width:100%; height:100%;
+      z-index:0; pointer-events:none;
+    }
+    #loader {
+      position:fixed; top:0; left:0; width:100%; height:100%;
+      background:var(--bg-primary);
+      display:flex; align-items:center; justify-content:center;
+      z-index:9999;
+      transition:opacity .6s var(--transition),visibility .6s var(--transition);
+    }
+    #loader.hidden { opacity:0; visibility:hidden; }
+    .loader-text {
+      font-size:1.8rem; font-weight:700; letter-spacing:.15em;
+      background:var(--accent-gradient);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      background-clip:text;
+      animation:pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity:.5; transform:scale(.98); }
+      50% { opacity:1; transform:scale(1); }
+    }
+
+    /* Layout */
+    .container {
+      position:relative; z-index:1;
+      max-width:1100px; margin:0 auto;
+      padding:3rem 1.5rem 4rem;
+    }
+
+    /* Header */
+    .header {
+      display:flex; align-items:center; justify-content:space-between;
+      margin-bottom:3rem; flex-wrap:wrap; gap:1rem;
+    }
+    .back-link {
+      display:flex; align-items:center; gap:.5rem;
+      color:var(--text-secondary); text-decoration:none;
+      font-size:.875rem; font-weight:500;
+      padding:.5rem .9rem;
+      border:1px solid var(--border-color);
+      border-radius:8px;
+      transition:all .2s var(--transition);
+    }
+    .back-link:hover {
+      color:var(--text-primary);
+      border-color:var(--border-hover);
+      background:var(--bg-card);
+    }
+    .back-link svg { flex-shrink:0; }
+
+    /* Hero */
+    .hero { text-align:center; margin-bottom:3rem; }
+    .hero-avatar {
+      width:72px; height:72px; margin:0 auto 1.25rem;
+      background:var(--accent-gradient);
+      border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.75rem; font-weight:700; color:#fff;
+      position:relative;
+    }
+    .hero-avatar::before {
+      content:''; position:absolute; inset:-3px;
+      border-radius:50%;
+      background:var(--accent-gradient);
+      opacity:.3;
+      filter:blur(8px);
+    }
+    .hero h1 {
+      font-size:2rem; font-weight:700; letter-spacing:-.02em;
+      margin-bottom:.4rem;
+    }
+    .hero h1 span {
+      background:var(--accent-gradient);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      background-clip:text;
+    }
+    .hero p { color:var(--text-secondary); font-size:.95rem; }
+
+    /* Stats */
+    .stats {
+      display:flex; gap:2rem; justify-content:center;
+      margin-bottom:2.5rem; flex-wrap:wrap;
+    }
+    .stat { text-align:center; }
+    .stat-number {
+      font-size:1.75rem; font-weight:700;
+      background:var(--accent-gradient);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      background-clip:text;
+      font-family:'JetBrains Mono',monospace;
+    }
+    .stat-label { font-size:.8rem; color:var(--text-muted); margin-top:.2rem; }
+
+    /* Filter tabs */
+    .filters {
+      display:flex; gap:.5rem; flex-wrap:wrap;
+      justify-content:center; margin-bottom:2.5rem;
+    }
+    .filter-btn {
+      padding:.45rem 1.1rem;
+      border:1px solid var(--border-color);
+      border-radius:999px;
+      background:transparent; cursor:pointer;
+      color:var(--text-secondary); font-size:.85rem; font-weight:500;
+      font-family:'Inter',sans-serif;
+      transition:all .2s var(--transition);
+    }
+    .filter-btn:hover {
+      border-color:var(--border-hover);
+      color:var(--text-primary);
+      background:var(--bg-card);
+    }
+    .filter-btn.active {
+      background:var(--accent-gradient);
+      border-color:transparent;
+      color:#fff;
+    }
+
+    /* Project grid */
+    .grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+      gap:1.25rem;
+    }
+
+    /* Project card */
+    .card {
+      background:var(--bg-card);
+      border:1px solid var(--border-color);
+      border-radius:var(--card-radius);
+      padding:1.5rem;
+      display:flex; flex-direction:column; gap:1rem;
+      transition:all .25s var(--transition);
+      text-decoration:none; color:inherit;
+      position:relative; overflow:hidden;
+      cursor:pointer;
+    }
+    .card::before {
+      content:''; position:absolute; inset:0;
+      background:var(--accent-gradient);
+      opacity:0;
+      transition:opacity .3s var(--transition);
+    }
+    .card:hover {
+      border-color:var(--border-hover);
+      background:var(--bg-card-hover);
+      transform:translateY(-2px);
+      box-shadow:0 8px 32px rgba(102,126,234,.12);
+    }
+    .card:hover::before { opacity:.03; }
+    .card.hidden { display:none; }
+
+    .card-header {
+      display:flex; align-items:flex-start; justify-content:space-between;
+      gap:.75rem;
+    }
+    .card-title {
+      font-size:1rem; font-weight:600;
+      color:var(--text-primary);
+      font-family:'JetBrains Mono',monospace;
+      line-height:1.3;
+    }
+    .card-star {
+      display:flex; align-items:center; gap:.3rem;
+      font-size:.8rem; color:var(--text-muted);
+      flex-shrink:0; padding-top:.1rem;
+    }
+    .card-star svg { width:14px; height:14px; }
+
+    .card-desc {
+      font-size:.875rem; color:var(--text-secondary);
+      line-height:1.6; flex:1;
+    }
+
+    .card-footer {
+      display:flex; align-items:center; justify-content:space-between;
+      gap:.5rem; flex-wrap:wrap;
+    }
+    .lang-badge {
+      display:flex; align-items:center; gap:.4rem;
+      font-size:.8rem; color:var(--text-secondary);
+    }
+    .lang-dot {
+      width:10px; height:10px; border-radius:50%; flex-shrink:0;
+    }
+    .cat-badge {
+      font-size:.72rem; padding:.2rem .6rem;
+      border-radius:999px;
+      background:rgba(102,126,234,.12);
+      color:var(--accent-blue);
+      border:1px solid rgba(102,126,234,.2);
+      font-weight:500;
+    }
+
+    /* External link icon */
+    .card-link-icon {
+      position:absolute; top:1rem; right:1rem;
+      opacity:0; transition:opacity .2s;
+      color:var(--text-muted);
+    }
+    .card:hover .card-link-icon { opacity:1; }
+
+    /* Footer */
+    .footer {
+      text-align:center; margin-top:4rem;
+      color:var(--text-muted); font-size:.8rem;
+      border-top:1px solid var(--border-color);
+      padding-top:1.5rem;
+    }
+    .footer a { color:var(--accent-blue); text-decoration:none; }
+    .footer a:hover { text-decoration:underline; }
+
+    /* Responsive */
+    @media(max-width:600px) {
+      .container { padding:2rem 1rem 3rem; }
+      .hero h1 { font-size:1.5rem; }
+      .grid { grid-template-columns:1fr; }
+      .header { justify-content:center; }
+    }
+  </style>
 </head>
 <body>
-  <p>Hello, World!</p>
+  <canvas id="bg-canvas"></canvas>
+  <div id="loader"><div class="loader-text">projects</div></div>
+
+  <main class="container">
+    <nav class="header">
+      <a href="https://tomeido.asuscomm.com" class="back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        tomeido.asuscomm.com
+      </a>
+      <a href="https://github.com/tomeido" target="_blank" rel="noopener noreferrer" class="back-link">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+          <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+        </svg>
+        GitHub
+      </a>
+    </nav>
+
+    <section class="hero">
+      <div class="hero-avatar">T</div>
+      <h1>tomeido <span>Projects</span></h1>
+      <p>Computational Designer · Grasshopper · BIM · Web · AI</p>
+    </section>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-number">35</div>
+        <div class="stat-label">오리지널 레포</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">11</div>
+        <div class="stat-label">★ Stars</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">4</div>
+        <div class="stat-label">언어</div>
+      </div>
+    </div>
+
+    <div class="filters">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="computational">Computational Design</button>
+      <button class="filter-btn" data-filter="web">Web Apps</button>
+      <button class="filter-btn" data-filter="ai">AI / ML</button>
+      <button class="filter-btn" data-filter="tools">Tools</button>
+    </div>
+
+    <div class="grid" id="project-grid">
+
+      <!-- ====== COMPUTATIONAL DESIGN ====== -->
+      <a href="https://github.com/tomeido/smr" target="_blank" rel="noopener noreferrer"
+         class="card" data-cat="computational" data-lang="C#">
+        <div class="card-link-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </div>
+        <div class="card-header">
+          <div class="card-title">smr</div>
+          <div class="card-star"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>1</div>
+        </div>
+        <p class="card-desc">Smart routing Revit 애드인 — Helix Toolkit 기반 3D 경로 최적화 플러그인</p>
+        <div class="card-footer">
+          <div class="lang-badge"><span class="lang-dot" style="background:#178600"></span>C#</div>
+          <span class="cat-badge">Computational Design</span>
+        </div>
+      </a>
+
+      <a href="https://github.com/tomeido/MeshToJSON" target="_blank" rel="noopener noreferrer"
+         class="card" data-cat="computational" data-lang="C#">
+        <div class="card-link-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </div>
+        <div class="card-header">
+          <div class="card-title">MeshToJSON</div>
+          <div class="card-star"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>1</div>
+        </div>
+        <p class="card-desc">Revit Add-In — Revit 요소를 JSON 형식으로 익스포트하는 플러그인</p>
+        <div class="card-footer">
+          <div class="lang-badge"><span class="lang-dot" style="background:#178600"></span>C#</div>
+          <span class="cat-badge">Computational Design</span>
+        </div>
+      </a>
+
+      <a href="https://github.com/tomeido/Mergery" target="_blank" rel="noopener noreferrer"
+         class="card" data-cat="computational" data-lang="C#">
+        <div class="card-link-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </div>
+        <div class="card-header">
+          <div class="card-title">Mergery</div>
+          <div class="card-star"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>1</div>
+        </div>
+        <p class="card-desc">Grasshopper 플러그인 — 수학적 포인트·라인 제어 및 워크플로우 탐색을 위한 도구</p>
+        <div class="card-footer">
+          <div class="lang-badge"><span class="lang-dot" style="background:#178600"></span>C#</div>
+          <span class="cat-badge">Computational Design</span>
+        </div>
+      </a>
+
+      <a href="https://github.com/tomeido/RecursiveSystems" target="_blank" rel="noopener noreferrer"
+         class="card" data-cat="computational" data-lang="Python">
+        <div class="card-link-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </div>
+        <div class="card-header">
+          <div class="card-title">RecursiveSystems</div>
+          <div class="card-star"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>1</div>
+        </div>
+        <p class="card-desc">생성 디자인의 재귀 시스템 — Medium 아티클 연계 Grasshopper Python 구현체</p>
+        <div class="card-footer">
+          <div class="lang-badge"><span class="lang-dot" style="background:#3572A5"></span>Python</div>
+          <span class="cat-badge">Computational Design</span>
+        </div>
+      </a>
+
+      <a href="https://github.com/tomeido/MaRScreateDesk" target="_blank" rel="noopener noreferrer"
+         class="card" data-cat="computational" data-lang="Python">
+        <div class="card-link-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </div>
+        <div class="card-header">
+          <div class="card-title">MaRScreateDesk</div>
+          <div class="card-star"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>1</div>
+        </div>
+        <p class="card-desc">Autodesk MaRS 오피스 예제 v3 — 업무공간 배치 자동화 스크립트</p>
+        <div class="card-footer">
+          <div class="lang-badge"><span class="lang-dot" style="background:#3572A5"></span>Python</div>
+          <span class="cat-badge">Computational Design</span>
+        </div>
+      </a>
+
+      <a href="https://github.com/tomeido/TiltedPolylineToVertical" target="_blank" rel="noopener noreferrer"
+         class="card" data-cat="computational" data-lang="C#">
+        <div class="card-link-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </div>
+        <div class="card-header">
+          <div class="card-title">TiltedPolylineToVertical</div>
+          <div class="card-star"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>1</div>
+        </div>
+        <p class="card-desc">기울어진 폴리라인을 수직으로 변환하는 Rhino/Grasshopper 플러그인</p>
+        <div class="card-footer">
+          <div class="lang-badge"><span class="lang-dot" style="background:#178600"></span>C#</div>
+          <span class="cat-badge">Computational Design</span>
+        </div>
+      </a>
+
+      <a href="https://github.com/tomeido/AdvancedSimplify" target="_blank" rel="noopener noreferrer"
+         class="card" data-cat="computational" data-lang="C#">
+        <div class="card-link-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </div>
+        <div class="card-header">
+          <div class="card-title">AdvancedSimplify</div>
+        </div>
+        <p class="card-desc">기존 Simplify로 제거 불가한 폴리라인 꼭짓점 삭제 알고리즘</p>
+        <div class="card-footer">
+          <div class="lang-badge"><span class="lang-dot" style="background:#178600"></span>C#</div>
+          <span class="cat-badge">Computational Design</span>
+        </div>
+      </a>
+
+      <a href="https://github.com/tomeido/Discontinuity" target="_blank" rel="noopener noreferrer"
+         class="card" data-cat="computational" data-lang="C#">
+        <div class="card-link-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </div>
+        <div class="card-header">
+          <div class="card-title">Discontinuity</div>
+        </div>
+        <p class="card-desc">폴리라인에서 불연속 꼭짓점을 탐지하는 Rhino 플러그인</p>
+        <div class="card-footer">
+          <div class="lang-badge"><span class="lang-dot" style="background:#178600"></span>C#</div>
+          <span class="cat-badge">Computational Design</span>
+        </div>
+      </a>
+
+      <a href="https://github.com/tomeido/blockchain-cad-bim" target="_blank" rel="noopener noreferrer"
+         class="card" data-cat="computational" data-lang="TypeScript">
+        <div class="card-link-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </div>
+        <div class="card-header">
+          <div class="card-title">blockchain-cad-bim</div>
+        </div>
+        <p class="card-desc">블록체인 + CAD + BIM 통합 플랫폼 — 건설 데이터 무결성 관리</p>
+        <div class="card-footer">
+          <div class="lang-badge"><span class="lang-dot" style="background:#3178c6"></span>TypeScript</div>
+          <span class="cat-badge">Computational Design</span>
+        </div>
+      </a>
+
+      <a href="https://github.com/tomeido/webCadTool" target="_blank" rel="noopener noreferrer"
+         class="card" data-cat="computational" data-lang="Rust">
+        <div class="card-link-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </div>
+        <div class="card-header">
+          <div class="card-title">webCadTool</div>
+        </div>
+        <p class="card-desc">Rust + WASM 기반 브라우저용 CAD 툴 — 고성능 웹 기하학 연산</p>
+        <div class="card-footer">
+          <div class="lang-badge"><span class="lang-dot" style="background:#dea584"></span>Rust</div>
+          <span class="cat-badge">Computational Design</span>
+        </div>
+      </a>
+
+      <a href="https://github.com/tomeido/ScanCadCompare" target="_blank" rel="noopener noreferrer"
+         class="card" data-cat="computational" data-lang="Python">
+        <div class="card-link-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </div>
+        <div class="card-header">
+          <div class="card-title">ScanCadCompare</div>
+        </div>
+        <p class="card-desc">3D 스캔 데이터와 CAD 모델 비교 분석 도구 — 시공 오차 검출</p>
+        <div class="card-footer">
+          <div class="lang-badge"><span class="lang-dot" style="background:#3572A5"></span>Python</div>
+          <span class="cat-badge">Computational Design</span>
+        </div>
+      </a>
+
+      <!-- ====== WEB APPS ====== -->
+      <a href="https://github.com/tomeido/steellife-ai-chat" target="_blank" rel="noopener noreferrer"
+         class="card" data-cat="web" data-lang="TypeScript">
+        <div class="card-link-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </div>
+        <div class="card-header">
+          <div class="card-title">steellife-ai-chat</div>
+          <div class="card-star"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>1</div>
+        </div>
+        <p class="card-desc">STEELLIFE 전용 AI 챗봇 — TypeScript 기반 건축 자재 상담 시스템</p>
+        <div class="card-footer">
+          <div class="lang-badge"><span class="lang-dot" style="background:#3178c6"></span>TypeScript</div>
+          <span class="cat-badge">Web Apps</span>
+        </div>
+      </a>
+
+      <a href="https://github.com/tomeido/steellife-website" target="_blank" rel="noopener noreferrer"
+         class="card" data-cat="web" data-lang="HTML">
+        <div class="card-link-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </div>
+        <div class="card-header">
+          <div class="card-title">steellife-website</div>
+        </div>
+        <p class="card-desc">STEELLIFE Co., Ltd. 프리미엄 3D 클래딩 회사 공식 웹사이트</p>
+        <div class="card-footer">
+          <div class="lang-badge"><span class="lang-dot" style="background:#e34c26"></span>HTML</div>
+          <span class="cat-badge">Web Apps</span>
+        </div>
+      </a>
+
+      <a href="https://github.com/tomeido/proptrust" target="_blank" rel="noopener noreferrer"
+         class="card" data-cat="web" data-lang="TypeScript">
+        <div class="card-link-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </div>
+        <div class="card-header">
+          <div class="card-title">proptrust</div>
+          <div class="card-star"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>1</div>
+        </div>
+        <p class="card-desc">부동산 신탁 플랫폼 — 블록체인 기반 프로퍼티 트러스트 관리 시스템</p>
+        <div class="card-footer">
+          <div class="lang-badge"><span class="lang-dot" style="background:#3178c6"></span>TypeScript</div>
+          <span class="cat-badge">Web Apps</span>
+        </div>
+      </a>
+
+      <a href="https://github.com/tomeido/pokeSplendor" target="_blank" rel="noopener noreferrer"
+         class="card" data-cat="web" data-lang="TypeScript">
+        <div class="card-link-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </div>
+        <div class="card-header">
+          <div class="card-title">pokeSplendor</div>
+        </div>
+        <p class="card-desc">포켓몬 Splendor 카드 게임 — TypeScript 기반 전략 보드게임 구현</p>
+        <div class="card-footer">
+          <div class="lang-badge"><span class="lang-dot" style="background:#3178c6"></span>TypeScript</div>
+          <span class="cat-badge">Web Apps</span>
+        </div>
+      </a>
+
+      <a href="https://github.com/tomeido/personality-test" target="_blank" rel="noopener noreferrer"
+         class="card" data-cat="web" data-lang="JavaScript">
+        <div class="card-link-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </div>
+        <div class="card-header">
+          <div class="card-title">personality-test</div>
+        </div>
+        <p class="card-desc">온라인 성격 유형 테스트 — 인터랙티브 질문 기반 성격 분석 웹앱</p>
+        <div class="card-footer">
+          <div class="lang-badge"><span class="lang-dot" style="background:#f0db4f"></span>JavaScript</div>
+          <span class="cat-badge">Web Apps</span>
+        </div>
+      </a>
+
+      <a href="https://github.com/tomeido/poke" target="_blank" rel="noopener noreferrer"
+         class="card" data-cat="web" data-lang="JavaScript">
+        <div class="card-link-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </div>
+        <div class="card-header">
+          <div class="card-title">poke</div>
+        </div>
+        <p class="card-desc">포켓몬 카드 웹앱 — JavaScript 기반 카드 컬렉션 & 트레이딩 인터페이스</p>
+        <div class="card-footer">
+          <div class="lang-badge"><span class="lang-dot" style="background:#f0db4f"></span>JavaScript</div>
+          <span class="cat-badge">Web Apps</span>
+        </div>
+      </a>
+
+      <a href="https://github.com/tomeido/bitcoin-will" target="_blank" rel="noopener noreferrer"
+         class="card" data-cat="web" data-lang="HTML">
+        <div class="card-link-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </div>
+        <div class="card-header">
+          <div class="card-title">bitcoin-will</div>
+        </div>
+        <p class="card-desc">비트코인 유언장 생성기 — 암호화폐 자산 상속 메시지 서명 도구</p>
+        <div class="card-footer">
+          <div class="lang-badge"><span class="lang-dot" style="background:#e34c26"></span>HTML</div>
+          <span class="cat-badge">Web Apps</span>
+        </div>
+      </a>
+
+      <a href="https://github.com/tomeido/prediction-market-agency" target="_blank" rel="noopener noreferrer"
+         class="card" data-cat="web" data-lang="CSS">
+        <div class="card-link-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </div>
+        <div class="card-header">
+          <div class="card-title">prediction-market-agency</div>
+        </div>
+        <p class="card-desc">예측 시장 에이전시 플랫폼 — AI 기반 예측 시장 운영 인터페이스</p>
+        <div class="card-footer">
+          <div class="lang-badge"><span class="lang-dot" style="background:#563d7c"></span>CSS</div>
+          <span class="cat-badge">Web Apps</span>
+        </div>
+      </a>
+
+      <a href="https://github.com/tomeido/yangyang-auction-ranking" target="_blank" rel="noopener noreferrer"
+         class="card" data-cat="web" data-lang="JavaScript">
+        <div class="card-link-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </div>
+        <div class="card-header">
+          <div class="card-title">yangyang-auction-ranking</div>
+        </div>
+        <p class="card-desc">양양 경매 랭킹 시스템 — 부동산 경매 데이터 시각화 & 순위 추적</p>
+        <div class="card-footer">
+          <div class="lang-badge"><span class="lang-dot" style="background:#f0db4f"></span>JavaScript</div>
+          <span class="cat-badge">Web Apps</span>
+        </div>
+      </a>
+
+      <a href="https://github.com/tomeido/BitGen" target="_blank" rel="noopener noreferrer"
+         class="card" data-cat="web" data-lang="HTML">
+        <div class="card-link-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </div>
+        <div class="card-header">
+          <div class="card-title">BitGen</div>
+        </div>
+        <p class="card-desc">비트코인 지갑 주소 생성기 — 브라우저 기반 오프라인 키 생성 도구</p>
+        <div class="card-footer">
+          <div class="lang-badge"><span class="lang-dot" style="background:#e34c26"></span>HTML</div>
+          <span class="cat-badge">Web Apps</span>
+        </div>
+      </a>
+
+      <!-- ====== AI / ML ====== -->
+      <a href="https://github.com/tomeido/HeartCritiqueEAS" target="_blank" rel="noopener noreferrer"
+         class="card" data-cat="ai" data-lang="Python">
+        <div class="card-link-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </div>
+        <div class="card-header">
+          <div class="card-title">HeartCritiqueEAS</div>
+        </div>
+        <p class="card-desc">심장 건강 평가 조기 경보 시스템 — AI 기반 심박 데이터 분석 & 위험도 경보</p>
+        <div class="card-footer">
+          <div class="lang-badge"><span class="lang-dot" style="background:#3572A5"></span>Python</div>
+          <span class="cat-badge">AI / ML</span>
+        </div>
+      </a>
+
+      <a href="https://github.com/tomeido/jazzscape" target="_blank" rel="noopener noreferrer"
+         class="card" data-cat="ai" data-lang="Rust">
+        <div class="card-link-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </div>
+        <div class="card-header">
+          <div class="card-title">jazzscape</div>
+        </div>
+        <p class="card-desc">재즈 음악 랜드스케이프 시각화 — Rust 기반 음악 생성 & 시각화 엔진</p>
+        <div class="card-footer">
+          <div class="lang-badge"><span class="lang-dot" style="background:#dea584"></span>Rust</div>
+          <span class="cat-badge">AI / ML</span>
+        </div>
+      </a>
+
+      <a href="https://github.com/tomeido/PythonOptimization" target="_blank" rel="noopener noreferrer"
+         class="card" data-cat="ai" data-lang="Python">
+        <div class="card-link-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </div>
+        <div class="card-header">
+          <div class="card-title">PythonOptimization</div>
+          <div class="card-star"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>1</div>
+        </div>
+        <p class="card-desc">Pyomo 부트캠프 — Python 최적화 기초부터 고급까지 학습 자료</p>
+        <div class="card-footer">
+          <div class="lang-badge"><span class="lang-dot" style="background:#3572A5"></span>Python</div>
+          <span class="cat-badge">AI / ML</span>
+        </div>
+      </a>
+
+      <a href="https://github.com/tomeido/blindtube" target="_blank" rel="noopener noreferrer"
+         class="card" data-cat="ai" data-lang="Python">
+        <div class="card-link-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </div>
+        <div class="card-header">
+          <div class="card-title">blindtube</div>
+        </div>
+        <p class="card-desc">YouTube 시각 장애인용 KR LLM 쇼츠 자동화 — AI 기반 영상 자동 생성</p>
+        <div class="card-footer">
+          <div class="lang-badge"><span class="lang-dot" style="background:#3572A5"></span>Python</div>
+          <span class="cat-badge">AI / ML</span>
+        </div>
+      </a>
+
+      <!-- ====== TOOLS ====== -->
+      <a href="https://github.com/tomeido/hwpDocxTranslator" target="_blank" rel="noopener noreferrer"
+         class="card" data-cat="tools" data-lang="JavaScript">
+        <div class="card-link-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </div>
+        <div class="card-header">
+          <div class="card-title">hwpDocxTranslator</div>
+        </div>
+        <p class="card-desc">HWP ↔ DOCX 문서 변환 번역기 — 한글 문서와 Word 간 자동 변환 도구</p>
+        <div class="card-footer">
+          <div class="lang-badge"><span class="lang-dot" style="background:#f0db4f"></span>JavaScript</div>
+          <span class="cat-badge">Tools</span>
+        </div>
+      </a>
+
+      <a href="https://github.com/tomeido/tubeRelay" target="_blank" rel="noopener noreferrer"
+         class="card" data-cat="tools" data-lang="JavaScript">
+        <div class="card-link-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </div>
+        <div class="card-header">
+          <div class="card-title">tubeRelay</div>
+        </div>
+        <p class="card-desc">YouTube 릴레이 프록시 — 지역 제한 콘텐츠 접근을 위한 중계 서버</p>
+        <div class="card-footer">
+          <div class="lang-badge"><span class="lang-dot" style="background:#f0db4f"></span>JavaScript</div>
+          <span class="cat-badge">Tools</span>
+        </div>
+      </a>
+
+      <a href="https://github.com/tomeido/steellife-crawler" target="_blank" rel="noopener noreferrer"
+         class="card" data-cat="tools" data-lang="Python">
+        <div class="card-link-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </div>
+        <div class="card-header">
+          <div class="card-title">steellife-crawler</div>
+        </div>
+        <p class="card-desc">STEELLIFE 웹 크롤러 — 건축 자재 데이터 자동 수집 & 가격 추적</p>
+        <div class="card-footer">
+          <div class="lang-badge"><span class="lang-dot" style="background:#3572A5"></span>Python</div>
+          <span class="cat-badge">Tools</span>
+        </div>
+      </a>
+
+      <a href="https://github.com/tomeido/steellite-waterwave" target="_blank" rel="noopener noreferrer"
+         class="card" data-cat="tools" data-lang="JavaScript">
+        <div class="card-link-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </div>
+        <div class="card-header">
+          <div class="card-title">steellite-waterwave</div>
+        </div>
+        <p class="card-desc">물결 파도 애니메이션 — Canvas 기반 리얼타임 수면 효과 렌더링</p>
+        <div class="card-footer">
+          <div class="lang-badge"><span class="lang-dot" style="background:#f0db4f"></span>JavaScript</div>
+          <span class="cat-badge">Tools</span>
+        </div>
+      </a>
+
+      <a href="https://github.com/tomeido/shapePacker" target="_blank" rel="noopener noreferrer"
+         class="card" data-cat="tools" data-lang="Python">
+        <div class="card-link-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </div>
+        <div class="card-header">
+          <div class="card-title">shapePacker</div>
+        </div>
+        <p class="card-desc">도형 패킹 알고리즘 — 최적 배치를 위한 2D 빈 패킹 최적화 도구</p>
+        <div class="card-footer">
+          <div class="lang-badge"><span class="lang-dot" style="background:#3572A5"></span>Python</div>
+          <span class="cat-badge">Tools</span>
+        </div>
+      </a>
+
+      <a href="https://github.com/tomeido/drShinOldCar" target="_blank" rel="noopener noreferrer"
+         class="card" data-cat="tools" data-lang="JavaScript">
+        <div class="card-link-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </div>
+        <div class="card-header">
+          <div class="card-title">drShinOldCar</div>
+        </div>
+        <p class="card-desc">신박사 클래식카 프로젝트 — 빈티지 차량 데이터 관리 & 커뮤니티 플랫폼</p>
+        <div class="card-footer">
+          <div class="lang-badge"><span class="lang-dot" style="background:#f0db4f"></span>JavaScript</div>
+          <span class="cat-badge">Tools</span>
+        </div>
+      </a>
+
+    </div><!-- /grid -->
+
+    <footer class="footer">
+      <p>© 2026 <a href="https://tomeido.asuscomm.com">tomeido</a> · Built with passion ·
+         <a href="https://github.com/tomeido" target="_blank" rel="noopener noreferrer">GitHub</a>
+      </p>
+    </footer>
+  </main>
+
+  <script>
+    // Background particle animation
+    (function() {
+      const canvas = document.getElementById('bg-canvas');
+      const ctx = canvas.getContext('2d');
+      let W, H, particles = [];
+
+      function resize() {
+        W = canvas.width = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+      }
+
+      function Particle() {
+        this.x = Math.random() * W;
+        this.y = Math.random() * H;
+        this.r = Math.random() * 1.5 + 0.3;
+        this.vx = (Math.random() - 0.5) * 0.25;
+        this.vy = (Math.random() - 0.5) * 0.25;
+        this.alpha = Math.random() * 0.4 + 0.05;
+      }
+
+      Particle.prototype.update = function() {
+        this.x += this.vx;
+        this.y += this.vy;
+        if (this.x < 0) this.x = W;
+        if (this.x > W) this.x = 0;
+        if (this.y < 0) this.y = H;
+        if (this.y > H) this.y = 0;
+      };
+
+      function init() {
+        particles = [];
+        const count = Math.min(80, Math.floor(W * H / 14000));
+        for (let i = 0; i < count; i++) particles.push(new Particle());
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, W, H);
+        particles.forEach(function(p) {
+          p.update();
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(102,126,234,' + p.alpha + ')';
+          ctx.fill();
+        });
+
+        // Connection lines
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            if (dist < 120) {
+              ctx.beginPath();
+              ctx.strokeStyle = 'rgba(102,126,234,' + (0.06 * (1 - dist/120)) + ')';
+              ctx.lineWidth = 0.5;
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.stroke();
+            }
+          }
+        }
+        requestAnimationFrame(draw);
+      }
+
+      resize();
+      init();
+      draw();
+      window.addEventListener('resize', function() { resize(); init(); });
+    })();
+
+    // Loading screen
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        document.getElementById('loader').classList.add('hidden');
+      }, 500);
+    });
+
+    // Category filter
+    document.querySelectorAll('.filter-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        const filter = btn.dataset.filter;
+        document.querySelectorAll('.card').forEach(function(card) {
+          if (filter === 'all' || card.dataset.cat === filter) {
+            card.classList.remove('hidden');
+          } else {
+            card.classList.add('hidden');
+          }
+        });
+      });
+    });
+  </script>
 </body>
 </html>
