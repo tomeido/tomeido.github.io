@@ -1,0 +1,202 @@
+[
+  {
+    "name": "smr",
+    "category": "computational",
+    "description": "Smart routing Revit 애드인 — Helix Toolkit 기반 3D 경로 최적화 플러그인"
+  },
+  {
+    "name": "MeshToJSON",
+    "category": "computational",
+    "description": "Revit Add-In — Revit 요소를 JSON 형식으로 익스포트하는 플러그인"
+  },
+  {
+    "name": "Mergery",
+    "category": "computational",
+    "description": "Grasshopper 플러그인 — 수학적 포인트·라인 제어 및 워크플로우 탐색을 위한 도구"
+  },
+  {
+    "name": "RecursiveSystems",
+    "category": "computational",
+    "description": "생성 디자인의 재귀 시스템 — Medium 아티클 연계 Grasshopper Python 구현체"
+  },
+  {
+    "name": "MaRScreateDesk",
+    "category": "computational",
+    "description": "Autodesk MaRS 오피스 예제 v3 — 업무공간 배치 자동화 스크립트"
+  },
+  {
+    "name": "TiltedPolylineToVertical",
+    "category": "computational",
+    "description": "기울어진 폴리라인을 수직으로 변환하는 Rhino/Grasshopper 플러그인"
+  },
+  {
+    "name": "AdvancedSimplify",
+    "category": "computational",
+    "description": "기존 Simplify로 제거 불가한 폴리라인 꼭짓점 삭제 알고리즘"
+  },
+  {
+    "name": "Discontinuity",
+    "category": "computational",
+    "description": "폴리라인에서 불연속 꼭짓점을 탐지하는 Rhino 플러그인"
+  },
+  {
+    "name": "blockchain-cad-bim",
+    "category": "computational",
+    "description": "3D CAD/BIM 모델 뷰어와 지갑 연결·자산 검증 화면을 결합한 Web3 프로토타입"
+  },
+  {
+    "name": "webCadTool",
+    "category": "computational",
+    "description": "Rust + WASM 기반 브라우저용 CAD 툴 — 고성능 웹 기하학 연산"
+  },
+  {
+    "name": "ScanCadCompare",
+    "category": "computational",
+    "description": "3D 스캔 데이터와 CAD 모델 비교 분석 도구 — 시공 오차 검출"
+  },
+  {
+    "name": "steellife-ai-chat",
+    "category": "web",
+    "description": "STEELLIFE 제품·서비스 문의를 안내하는 Gemini 기반 다국어 고객 지원 챗봇",
+    "demo": "https://steellife-ai-chat.vercel.app/"
+  },
+  {
+    "name": "steellife-website",
+    "category": "web",
+    "description": "STEELLIFE Co., Ltd. 프리미엄 3D 클래딩 회사 공식 웹사이트"
+  },
+  {
+    "name": "proptrust",
+    "category": "web",
+    "description": "부동산 신탁 플랫폼 — 블록체인 기반 프로퍼티 트러스트 관리 시스템"
+  },
+  {
+    "name": "pokeSplendor",
+    "category": "web",
+    "description": "친구와 실시간으로 즐기는 포켓몬 테마 Splendor — 온라인 멀티플레이·컴퓨터 대전 지원",
+    "demo": "https://domeido.asuscomm.com/splendor/"
+  },
+  {
+    "name": "personality-test",
+    "category": "web",
+    "description": "MBTI·에니어그램·본능 유형을 답변에 따라 실시간으로 분석하는 인터랙티브 성격 테스트",
+    "demo": "https://tomeido.github.io/personality-test/"
+  },
+  {
+    "name": "poke",
+    "category": "web",
+    "description": "포켓몬 카드 웹앱 — JavaScript 기반 카드 컬렉션 & 트레이딩 인터페이스"
+  },
+  {
+    "name": "bitcoin-will",
+    "category": "web",
+    "description": "비트코인 유언장 생성기 — 암호화폐 자산 상속 메시지 서명 도구"
+  },
+  {
+    "name": "prediction-market-agency",
+    "category": "web",
+    "description": "예측 시장 에이전시 플랫폼 — AI 기반 예측 시장 운영 인터페이스"
+  },
+  {
+    "name": "yangyang-auction-ranking",
+    "category": "web",
+    "description": "양양 경매 랭킹 시스템 — 부동산 경매 데이터 시각화 & 순위 추적"
+  },
+  {
+    "name": "BitGen",
+    "category": "web",
+    "description": "브라우저에서 비트코인 키·주소·시드 문구를 생성하는 교육용 지갑 생성 데모",
+    "demo": "https://tomeido.github.io/BitGen/"
+  },
+  {
+    "name": "HeartCritiqueEAS",
+    "category": "ai",
+    "description": "AI로 미담·비판 이야기를 수집하고 사용자 투표로 Arweave에 보관하는 아카이브",
+    "demo": "https://domeido.asuscomm.com/"
+  },
+  {
+    "name": "jazzscape",
+    "category": "tools",
+    "description": "마우스와 키보드 움직임으로 재즈 밴드와 즉흥 연주하는 Rust·Bevy 인터랙티브 음악 게임"
+  },
+  {
+    "name": "PythonOptimization",
+    "category": "ai",
+    "description": "Pyomo 부트캠프 — Python 최적화 기초부터 고급까지 학습 자료"
+  },
+  {
+    "name": "blindtube",
+    "category": "ai",
+    "description": "YouTube 시각 장애인용 KR LLM 쇼츠 자동화 — AI 기반 영상 자동 생성"
+  },
+  {
+    "name": "hwpDocxTranslator",
+    "category": "tools",
+    "description": "HWP ↔ DOCX 문서 변환 번역기 — 한글 문서와 Word 간 자동 변환 도구"
+  },
+  {
+    "name": "tubeRelay",
+    "category": "tools",
+    "description": "YouTube 릴레이 프록시 — 지역 제한 콘텐츠 접근을 위한 중계 서버"
+  },
+  {
+    "name": "steellife-crawler",
+    "category": "tools",
+    "description": "STEELLIFE 웹 크롤러 — 건축 자재 데이터 자동 수집 & 가격 추적"
+  },
+  {
+    "name": "steellite-waterwave",
+    "category": "tools",
+    "description": "물결 파도 애니메이션 — Canvas 기반 리얼타임 수면 효과 렌더링"
+  },
+  {
+    "name": "shapePacker",
+    "category": "tools",
+    "description": "도형 패킹 알고리즘 — 최적 배치를 위한 2D 빈 패킹 최적화 도구"
+  },
+  {
+    "name": "drShinOldCar",
+    "category": "tools",
+    "description": "엔카 중고차 매물 링크로 닥신 스타일의 AI 차량 평가 프롬프트를 만드는 웹 도구",
+    "demo": "https://tomeido.github.io/drShinOldCar/"
+  },
+  {
+    "name": "mantis-cad",
+    "category": "computational",
+    "description": "Rust 기반 파라메트릭 CAD — 노드 편집과 서명된 변경 이력으로 협업하는 웹·네이티브 모델러",
+    "demo": "https://domeido.asuscomm.com/mantis/"
+  },
+  {
+    "name": "tomeiChain",
+    "category": "tools",
+    "description": "서명된 데이터와 CAD 기록을 검증·보관하는 Rust 기반 데이터 공증 체인"
+  },
+  {
+    "name": "computationaldesigntelegram",
+    "category": "ai",
+    "description": "Web3·AI·컴퓨테이셔널 디자인 소식을 한국어로 전하는 텔레그램 브리핑 봇"
+  },
+  {
+    "name": "infinityGuide",
+    "category": "web",
+    "description": "《무한의 시작》의 과학 철학을 시뮬레이션과 퀴즈로 탐색하는 인터랙티브 가이드",
+    "demo": "https://tomeido.github.io/infinityGuide/"
+  },
+  {
+    "name": "CADChain",
+    "category": "computational",
+    "description": "브라우저에서 2D 도면을 그리고 로컬 체인에 저장·검증하는 CAD 실험",
+    "demo": "https://cad-chain-swart.vercel.app/"
+  },
+  {
+    "name": "soulBound",
+    "category": "ai",
+    "description": "tomeiChain과 연결되는 Rust 기반 AI 컴패니언·A2A 프레임워크"
+  },
+  {
+    "name": "Karts-A-flagship",
+    "category": "computational",
+    "description": "Mantis CAD·Web3·공간 취향 데이터를 연결한 프로젝트 기획 및 3D 인터랙티브 데모",
+    "demo": "https://tomeido.github.io/Karts-A-flagship/"
+  }
+]
